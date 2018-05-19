@@ -1,6 +1,4 @@
-
 from abc import ABC
-
 
 class Raumschiff(ABC):
     def __init__(self):

@@ -3,12 +3,14 @@ from Cargo import Cargo
 from Landwirt import Landwirt
 from Industrie import Industrie
 from HighTech import HighTech
+from Planet import Planet
 import sys
 from random import randint
 
 money = 1000
 ships = []
 waren = {'Bier' : 0, 'Gold': 0, 'Weizen': 0, 'Wasser': 0}
+schiffe = {'Cargo' : 0, 'Fighter' : 0}
 
 name = input("Name: ")
 print("Herzlich Willkommen, " + name + "!")
@@ -17,28 +19,27 @@ print("")
 "Planetauswahl nach der Begrueßung"
 
 def Planetwechsel():
-    global activePlanet
+    global aplanet
     
     while(True):
         print("Wähle einen Planeten:")
-        choice = input("Landwirtschaft[a], Industrie[b], technischer Planet[c]")
-        if(choice == "a"):
-            activePlanet = Landwirt()
+        wahl = input("Landwirtschaft[a], Industrie[b], technischer Planet[c]")
+        if(wahl == "a"):
+            aplanet = Landwirt()
             break
-        if(choice == "b"):
-            activePlanet = Industrie()
+        if(wahl == "b"):
+            aplanet = Industrie()
             break
-        if(choice == "c"):
-            activePlanet = HighTech()
+        if(wahl == "c"):
+            aplanet = HighTech()
             break
 
         print("Falsche Eingabe!")
 
-
 def mainMenu():
     while(True):
         print("")
-        print("### Willkommen auf dem " + activePlanet.__class__.__name__ + "-Planet ###" )
+        print("### Willkommen auf dem " + aplanet.__class__.__name__ + "-Planet "+ aplanet.getName() )
         print("")
         print("Konto  " + str(money)+"$")
         print("")
@@ -52,7 +53,6 @@ def mainMenu():
         
         print("## EINKAUFEN ##")
         print("[b] Schiff kaufen")
-        print("[c] Cargo Space")
         print("[d] Waren kaufen")
         
         print("---------------------")
@@ -65,79 +65,64 @@ def mainMenu():
         print("[f] Zu einem anderen Planeten wechseln")
         
         
-        
-        choice = 0
-        choice = input()
-        if(choice == "b"):
+        wahl = 0
+        wahl = input()
+        if(wahl == "b"):
             buyShip()
-        if(choice == "c"):
-            print("CargoSpace  " +str(cargoSpaceCalk()))
-            input("[ENTER]")
-        if(choice == "a"):
+        if(wahl == "a"):
             checkwaren()    
-        if(choice == "d"):
+        if(wahl == "d"):
             Warenkaufen()
-        if(choice == "e"):
+        if(wahl == "e"):
             Warenverkaufen()
-        if(choice == "f"):
-            travel()
+        if(wahl == "f"):
+            reise()
 
 def randomEvent():
-    money= 0
-    "global money"
-    print("Du hast " +money+ "$")
-    
-    print("Dir wurde alles gestohlen!")
-        
+    global money
+    money = money / 2 
+    print("Die Space-Diebe haben angegriffen...FUCK")
+    print("")
+    print("FUCK - Du hast dein ganzen Geld fast verloren... Pass auf Kamerad")
+    print("")
     input("Druck Enter")
-    sys.exit(0)    
-    
-def travel():
-    
+   
+def reise():
     Planetwechsel()
-    if(randint(0,5) > 4):
+    if(randint(0,100) > 85):
         randomEvent()
     
 def checkwaren():
-    
     for key,value in waren.items():
         print(key +": " + str(value))
-
-def cargoSpaceCalk():
-    
-    space = 10
-    for s in ships:
-        if(s.__class__.__name__ == "Cargo"):
-            space += s.getCargoSpace()
-    return space
 
 def Warenverkaufen(): 
     
     global waren
     global money
-    prices = activePlanet.getPrices()
+    prices = aplanet.getPrices()
     #function
     print("Der Preis lautet")
     for key,value in prices.items():
         print(key +": " + str(value))
-    ichoice = input("Was kaufen: Bier[a], Gold[b], Weizen[c], Wasser[d]")
+    iwahl = input("Was kaufen: Bier[a], Gold[b], Weizen[c], Wasser[d]")
     number = int(input("Wieviel?"))
-    if(ichoice == "a"):
+    if(iwahl == "a"):
         if(waren['Bier'] >= number):
             money = money + (prices['Bier'] * number)
             waren['Bier'] = waren['Bier'] - number
         
-    if(ichoice == "b"):
+    if(iwahl == "b"):
         if(waren['Gold'] >= number):
             money = money + (prices['Gold'] * number)
             waren['Gold'] = waren['Gold'] - number
         
-    if(ichoice == "c"):
+    if(iwahl == "c"):
         if(waren['Weizen'] >= number):
             money = money + (prices['Weizen'] * number)
             waren['Weizen'] = waren['Weizen'] - number
             
-    if(ichoice == "d"):
+    if(iwahl == "d"):
         if(waren['Wasser'] >= number):
             money = money + (prices['Wasser'] * number)
             waren['Wasser'] = waren['Wasser'] - number
@@ -146,67 +131,68 @@ def Warenkaufen():
 
     global waren
     global money
-    prices = activePlanet.getPrices()
+    prices = aplanet.getPrices()
     
     print("Der Preis lautet")
     for key,value in prices.items():
         print(key +": " + str(value))
-    ichoice = input("Was kaufen: Bier[a], Gold[b] Weizen[c], Wasser[d]")
+    iwahl = input("Was kaufen: Bier[a], Gold[b] Weizen[c], Wasser[d]")
     number = int(input("Wieviel?"))
-    if(number <= cargoSpaceCalk()):
-        if(ichoice == "a"):
-            checkmoney = money - (prices['Bier'] * number)
-            if(checkmoney >= 0):
-                money = money - (prices['Bier'] * number)
-                waren['Bier'] += number
-            else:
-                print("Keine Geld")
+    #if(number <= cargoSpaceCalk()):
+    if(iwahl == "a"):
+        checkmoney = money - (prices['Bier'] * number)
+        if(checkmoney >= 0):
+            money = money - (prices['Bier'] * number)
+            waren['Bier'] += number
+        else:
+            print("Keine Geld")
                 
-        if(ichoice == "b"):
-            checkmoney = money - (prices['Gold'] * number)
-            if(checkmoney >= 0):
-                money = money - (prices['Gold'] * number)
-                waren['Gold'] += number
-            else:
-                print("Keine Geld")
+    if(iwahl == "b"):
+        checkmoney = money - (prices['Gold'] * number)
+        if(checkmoney >= 0):
+            money = money - (prices['Gold'] * number)
+            waren['Gold'] += number
+        else:
+            print("Keine Geld")
                 
-        if(ichoice == "c"):
-            checkmoney = money - (prices['Weizen'] * number)
-            if(checkmoney >= 0):
-                money = money - (prices['Weizen'] * number)
-                waren['Weizen'] += number
-            else:
-                print("Keine Geld")
+    if(iwahl == "c"):
+        checkmoney = money - (prices['Weizen'] * number)
+        if(checkmoney >= 0):
+            money = money - (prices['Weizen'] * number)
+            waren['Weizen'] += number
+        else:
+            print("Keine Geld")
                 
-        if(ichoice == "d"):
-            checkmoney = money - (prices['Wasser'] * number)
-            if(checkmoney >= 0):
-                money = money - (prices['Wasser'] * number)
-                waren['Wasser'] += number
-            else:
-                print("Keine Geld")
-                
-    else:
-        print("Kein Platz")
-    input("Druck Enter")
+    if(iwahl == "d"):
+        checkmoney = money - (prices['Wasser'] * number)
+        if(checkmoney >= 0):
+            money = money - (prices['Wasser'] * number)
+            waren['Wasser'] += number
+        else:
+            print("Keine Geld")
+            
+        input("Druck Enter")
            
 def buyShip():
     
     #Variables
     global ships
     global money
+    global number
     #function
     print("Was kaufen?")
-    print("[1] Fighter Ship")
-    print("[2] Cargo Ship")
-    print("[0] niggs")
-    choice = input()
-    if(choice == "1" or choice == "2"):
-        if(choice == "1"):
+    print("[a] Fighter Ship")
+    print("[b] Cargo Ship")
+    print("[c] nichts")
+    wahl = input()
+    if(wahl == "a" or wahl == "b"):
+        if(wahl == "a"):
             ships.insert(len(ships), Fighter()) 
             print("Fighter Schiff gekauft")
-        if(choice == "2"):
+            money = money - 700
+        if(wahl == "b"):
             ships.insert(len(ships), Cargo())
+            money = money - 500
             print("Cargo Schiff gekauft")
 
     print("Du hast diese Schiffe ")
